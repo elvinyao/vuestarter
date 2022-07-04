@@ -31,8 +31,29 @@
         <todo-item v-for="item in groceryList" v-bind:todo="item" v-bind:key="item.id"></todo-item>
     </ol>
 </div>
+<div id="app">
+
+</div>
 </body>
 <script>
+    const app2 = Vue.createApp({
+        data() {
+            return { count: 1 }
+        },
+        beforeCreate(){
+            console.log('count is you guess')
+        },
+        created(){
+            console.log('count is :'+this.count)
+        },
+        beforeMount(){
+            console.log('count is :'+this.count)
+        },
+    })
+
+    const vm = app2.mount('#app')
+
+
     const Counter = {
         data() {
             return {
