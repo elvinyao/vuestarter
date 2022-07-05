@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <!--    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>-->
+</head>
+<body>
+
+<div id="app">
+    <button @click="increment">Up vote</button>
+    <div class="static" :class="classObject">asdasdasd</div>
+    <div :class="[activeClass, errorClass]"></div>
+</div>
+
+<div id="computed-basics">
+    <p>Has published books:</p>
+    <span>{{ publishedBooksMessage }}</span>
+</div>
+
+<div id="watch-example">
+    <p>
+        Ask a yes/no question:
+        <input v-model="question"/>
+    </p>
+    <p>
+        {{answer}}
+    </p>
+</div>
+
+</body>
+<script>
+
+    const app = Vue.createApp({
+        data() {
+            return {
+                count: 4
+                , isActive: true, hasError: true, error: null, activeClass: 'active',
+                errorClass: 'text-danger'
+            }
+        },
+        computed: {
+            classObject() {
+                return {
+                    active: this.isActive && !this.error,
+                    'text-danger': this.error && this.error.type === 'fatal'
+                }
+            }
+        },
+        methods: {
+            increment() {
+                this.count++
+
+            }
+        }
+    })
+    const vm = app.mount('#app')
+    console.log(vm.$data.count)
+    console.log(vm.count)
+
+    vm.count = 5
+    console.log(vm.$data.count)
+    vm.$data.count = 6
+    console.log(vm.count)
+
+    // vm.increment()
+    console.log(vm.count)
+
+    const watchExampleVM = Vue.createApp(
+        {
+            data() {
+                return {
+                    question: '',
+                    answer: 'Questions usually contain a question mark. ;-)'
+
+                }
+            }, watch: {
+                question(newQuestion, oldQuestion) {
+                    if (newQuestion.indexOf('?') > -1) {
+                        this.getAnswer()
+                    }
+                }
+            }, methods: {
+                getAnswer() {
+                    this.answer = 'Thinking...'
+                    axios
+                        .get('https://yesno.wtf/api')
+                        .then(response => {
+                            this.answer = response.data.answer
+                        })
+                        .catch(error => {
+                            this.answer = 'Error! Could not reach the API. ' + error
+                        })
+                }
+            }
+        }
+    ).mount('#watch-example')
+
+    const app2 = Vue.createApp({
+        data() {
+            return {
+                author: {
+                    name: 'John Doe',
+                    books: [
+                        'Vue 2 - Advanced Guide',
+                        'Vue 3 - Basic Guide',
+                        'Vue 4 - The Mystery'
+                    ]
+                }
+            }
+        },
+        computed: {
+            publishedBooksMessage() {
+                return this.author.books.length > 0 ? 'Yes' : 'No'
+            }
+        }
+    })
+    app2.mount('#computed-basics')
+
+
+</script>
+</html>
